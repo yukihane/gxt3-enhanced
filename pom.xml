@@ -21,6 +21,11 @@
         <includes>
           <include>**/*.java</include>
           <include>**/*.gwt.xml</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.properties</include>
         </includes>
       </resource>
     </resources>
