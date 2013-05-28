@@ -22,6 +22,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.core.shared.event.GroupingHandlerRegistration;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreAddEvent.StoreAddHandler;
@@ -140,7 +141,7 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
     private final M model;
     private final Map<Object, Change<M, ?>> changes = new HashMap<Object, Store.Change<M, ?>>();
 
-    private boolean invalid;
+    private Map<String, Boolean> validMap;
 
     /**
      * Creates a new record that wraps the given model.
@@ -172,9 +173,15 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
           changes.put(c.getChangeTag(), c);
           modifiedRecords.add(this);
         }
+        if (validMap != null) {
+          validMap.remove(property.getPath());
+        }
         fireEvent(new StoreRecordChangeEvent<M>(this, property));
       } else {
         property.setValue(model, value);
+        if (validMap != null) {
+          validMap.remove(property.getPath());
+        }
         fireEvent(new StoreUpdateEvent<M>(Collections.singletonList(this.model)));
       }
     }
@@ -189,6 +196,7 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
           c.modify(model);
         }
         changes.clear();
+        validMap = null;
         if (fireEvent) {
           fireEvent(new StoreUpdateEvent<M>(Collections.singletonList(this.model)));
         }
@@ -258,12 +266,39 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
       return !changes.isEmpty();
     }
 
-    public void setInvalid(boolean invalid) {
-      this.invalid = invalid;
+    /**
+     * Sets whether the record is valid (defaults to true). The valid state of a
+     * record is not modified or changed by the record itself. Both EditorGrid
+     * and FieldBinding will set the valid state of the record to match the
+     * field's valid state after an edit completes. (以上, gxt2における記述)
+     * 
+     * @param property
+     *          the property name
+     * @param valid
+     *          true if valid, false otherwise
+     */
+    public void setValid(String property, boolean valid) {
+      if (validMap == null) {
+        validMap = new FastMap<Boolean>();
+      }
+      validMap.put(property, valid);
     }
 
-    public boolean isInvalid() {
-      return invalid;
+    /**
+     * Returns true if the record is valid. (以上, gxt2における記述)
+     * 
+     * @param property
+     *          the property name
+     * @return true if the record is valid
+     */
+    public boolean isValid(String property) {
+      if (validMap == null) {
+        return true;
+      }
+      if (validMap.containsKey(property)) {
+        return validMap.get(property);
+      }
+      return true;
     }
 
     /**
@@ -275,6 +310,9 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
      * @param property the property of the model to revert
      */
     public void revert(ValueProvider<? super M,?> property) {
+      if (validMap != null) {
+        validMap.remove(property.getPath());
+      }
       if (changes.remove(property) != null) {
         fireEvent(new StoreUpdateEvent<M>(Collections.singletonList(this.model)));
       }
@@ -286,7 +324,7 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
      */
     public void revert() {
       changes.clear();
-      invalid = false;
+      validMap = null;
 
       fireEvent(new StoreUpdateEvent<M>(Collections.singletonList(this.model)));
     }

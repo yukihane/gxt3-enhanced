@@ -1417,7 +1417,7 @@ public class GridView<M> {
           cellClasses += cellDirty;
         }
 
-        if (r != null && r.isInvalid()) {
+        if (r != null && !r.isValid(columnConfig.getPath())) {
           cellClasses += cellInvalid;
         }
 
