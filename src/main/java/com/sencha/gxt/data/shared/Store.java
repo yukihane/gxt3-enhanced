@@ -140,6 +140,8 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
     private final M model;
     private final Map<Object, Change<M, ?>> changes = new HashMap<Object, Store.Change<M, ?>>();
 
+    private boolean invalid;
+
     /**
      * Creates a new record that wraps the given model.
      * 
@@ -256,6 +258,14 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
       return !changes.isEmpty();
     }
 
+    public void setInvalid(boolean invalid) {
+      this.invalid = invalid;
+    }
+
+    public boolean isInvalid() {
+      return invalid;
+    }
+
     /**
      * Rejects a single change made to the Record since its creation, or since
      * the last commit operation.
@@ -276,6 +286,7 @@ public abstract class Store<M> implements HasStoreHandlers<M> {
      */
     public void revert() {
       changes.clear();
+      invalid = false;
 
       fireEvent(new StoreUpdateEvent<M>(Collections.singletonList(this.model)));
     }
