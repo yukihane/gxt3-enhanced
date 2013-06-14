@@ -8,7 +8,7 @@
 package com.sencha.gxt.core.client.util;
 import java.util.Date;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 
 /**
  * Instances of this class are immutable and as such any mutation methods return
