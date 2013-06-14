@@ -9,8 +9,8 @@ package com.sencha.gxt.widget.core.client.form;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import com.sencha.gxt.cell.core.client.form.TimeFieldCell;
 import com.sencha.gxt.messages.client.DefaultMessages;
 import com.sencha.gxt.widget.core.client.event.ParseErrorEvent;
