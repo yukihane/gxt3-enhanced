@@ -101,11 +101,6 @@ TH {
   background-image: invalidLine;
 }
 
-.cellDirty {
-  background: transparent no-repeat 0 0;
-  background-image: dirty;
-}
-
 .cellSelected {
   background-color: #b8cfee !important;
   color: #000;

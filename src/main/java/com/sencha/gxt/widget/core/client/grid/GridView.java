@@ -1343,6 +1343,7 @@ public class GridView<M> {
     final String cellFirstClass = " x-grid-cell-first";
     final String cellLastClass = " x-grid-cell-last";
     final String cellDirty = " " + styles.cellDirty();
+    final String cellInvalid = " " + styles.cellInvalid();
 
     final String rowWrap = styles.rowWrap();
     final String rowBody = styles.rowBody();
@@ -1414,6 +1415,10 @@ public class GridView<M> {
 
         if (showDirtyCells && r != null && r.getChange(columnConfig.getValueProvider()) != null) {
           cellClasses += cellDirty;
+        }
+
+        if (r != null && !r.isValid(columnConfig.getPath())) {
+          cellClasses += cellInvalid;
         }
 
         if (viewConfig != null) {
